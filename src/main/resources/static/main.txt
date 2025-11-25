@@ -1,0 +1,140 @@
+const apiBase = 'http://localhost:8080/api';
+
+async function fetchBooks(){
+    try {
+        const response = await fetch(`${apiBase}/books`);
+
+        if(!response.ok){
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const books = await response.json();
+        console.log("Book from backend:", books);
+
+        renderBookList(books);
+
+        if(books.length > 0){
+            handleBookClick(books[0], true);
+        }
+    } catch (error) {
+        console.error("Failed to load books:", error);
+    }
+}
+// Take an array of book objects and draw them into the left column.
+// Each book = { id, title, author}
+function renderBookList(books){
+    const container = document.getElementById("books-container");
+
+    //Clear anything that might be there
+    container.innerHTML = "";
+
+    book.forEach(book => {
+        // <article class="book-card">
+        const card = document.createElement("article");
+        card.classList.add("book-card");
+
+        //<h3>Book Title</h3>
+        const titleEl = document.createElement("h3");
+        titleEl.textContent = book.title;
+
+        //<p>Book Author</p>
+        const authorEl = document.createElement("p");
+        authorEl.textContent = book.author;
+
+        //Put the pieces together
+        card.appendChild(titleEl);
+        card.appendChild(authorEl);
+
+        //click a book, load its posts
+        card.addEventListener("click", () => handleBookClick(book));
+
+        book._cardElement = card; //stashing DOM node for later use.
+
+        // Add this card into the container
+        container.appendChild(card)
+    });
+}
+
+function handleBookClick(book, fromAutoSelect = false){
+    currentBookId = book.id;
+
+    highlightSelectedBook(book._cardElement);
+    updatedPostsHeading(book.title);
+
+    if(!fromAutoSelect){
+        console.log(`Book clicked: ${book.title} (id=${book.id})`);
+    }
+    fetchPostsForBook(book.id);
+}
+
+function highlightSelectedBook(selectedCard) {
+    // remove selected class from all book cards
+    document
+        .querySelectorAll(".book-card")
+        .forEach(card => card.classList.remove("selected"));
+
+    // add it to the clicked one
+    if(selectedCard){
+        selectedCard.classList.add("selected");
+    }
+}
+
+function updatedPostsHeading(bookTitle){
+    const heading = document.getElementById("posts-heading");
+    heading.textContent = `Posts for: ${bookTitle}`;
+}
+
+// fetch posts for a book
+async function fetchPostsForBook(bookId) {
+    try {
+        const response = await fetch(`${apiBase}/posts?bookId=${bookId}`);
+        if(!response.ok){
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const posts = await response.json();
+        console.log(`Posts for book ${bookId}:`, posts);
+
+        renderPosts(posts);
+    } catch (error) {
+        console.error("Failed to load posts:", error);
+    }
+}
+function renderPosts(posts) {
+    const container = document.getElementById("posts-container");
+    container.innerHTML = "";
+
+    if (posts.length === 0) {
+        const empty = document.createElement("p");
+        empty.textContent = "No posts for this book yet.";
+        container.appendChild(empty);
+        return;
+    }
+
+    posts.forEach(post => {
+        const card = document.createElement("article");
+        card.classList.add("post-card");
+
+        const titleEl = document.createElement("h3");
+        titleEl.classList.add("post-title");
+        titleEl.textContent = post.headline;
+
+        const metaEl = document.createElement("div");
+        metaEl.classList.add("post-meta");
+        const createdAt = post.createdAt ?? "";
+        metaEl.textContent = `${post.authorName} • ${createdAt} • Rating: ${post.rating}/5`;
+
+        const contentEl = document.createElement("p");
+        contentEl.classList.add("post-content");
+        contentEl.textContent = post.content;
+
+        card.appendChild(titleEl);
+        card.appendChild(metaEl);
+        card.appendChild(contentEl);
+
+        container.appendChild(card);
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    fetchBooks()});
