@@ -1,17 +1,206 @@
-
-
-
+const API_BASE = "http://localhost:8080/api";
+let currentBookId = null; //last clicked book here
+let currentBookTitle ="";// just for the heading text
 
 // This is to run only after the html is ready
 document.addEventListener("DOMContentLoaded",()=>{
     console.log("BookBites front end load");
-
+    // load books when the page is ready
     fetchBooks()
+    setupNewPostForm();
 });
 
 async function fetchBooks() {
-    const response = await fetch("/api/books"); //ask backend for books
+    const response = await fetch(`${API_BASE}/books`); //ask backend for books
     const books = await response.json();        //turn JSON into JS objects
 
     console.log("Books from backend:", books);
+    renderBookList(books);
+}
+
+function renderBookList(books){
+    // Find the empty "books-container"
+    const container = document.getElementById("books-container");
+    // const element = container.querySelector("ul") || document.createElement("ul");
+
+    if(!container){
+        console.error("No #book-container element found");
+        return;
+    }
+    // Clear anything that was there
+    container.innerHTML = "";
+
+    const element = document.createElement("div");
+
+    // For each book, create a clickable element
+    books.forEach((book)=>{
+        const item = document.createElement("button");
+        item.className = "book-item";
+        item.textContent = book.title;
+        console.log(book.title);
+
+    // use this to load posts for that book
+        item.addEventListener("click", ()=>{
+            // remember which book is selected
+            currentBookId = book.id;
+            currentBookTitle = book.title;
+            console.log("Clicked book:", book);
+
+            // highlight this book in the list
+            document
+                .querySelectorAll(".book-item")
+                .forEach((btn) => btn.classList.remove("selected-book"));
+            item.classList.add("selected-book");
+
+            // load that book's posts from the backend
+            fetchPostsForBook(book.id);
+        });
+        element.appendChild(item);
+    });
+    container.appendChild(element);
+    // if(!container.querySelector("ul")){
+    //     container.appendChild(item);
+    // }
+}
+
+function renderPostsList(posts){
+    const heading = document.getElementById("posts-heading");
+    const container = document.getElementById("posts-container");
+
+    if(!container){
+        console.error("No #posts-container element found");
+        return;
+    }
+
+    //update the heading to show which book we're on
+    if(currentBookTitle){
+        heading.textContent = `Posts for: ${currentBookTitle}`;
+    }else{
+        heading.textContent = "Posts";
+    }
+
+    // Clear out any old posts
+    container.innerHTML = "";
+
+    // If there are no posts, show a friendly message
+    if(!posts || posts.length === 0){
+        const empty = document.createElement("p");
+        empty.textContent = "No posts yet. Be the first to write about this book!";
+        conatainer.appendChild(empty);
+        return;
+    }
+
+    // post cards
+    posts.forEach((post) =>{
+        const article = document.createElement("article");
+        article.className = "post-card";
+
+        const headline = document.createElement("h3");
+        headline.textContent = post.headline;
+
+        const divide = document.createElement("div");
+        divide.className = "post-meta";
+        divide.textContent = `${post.authorName} • Rating: ${post.rating}/5`;
+
+        const writing = document.createElement("p");
+        writing.textContent = post.content;
+
+        article.append(headline,divide,writing);
+        container.appendChild(article);
+    })
+}
+
+function setupNewPostForm(){
+    const form = document.getElementById("new-post-form");
+    const message = document.getElementById("form-message");
+
+    if(!form){console.warn("No new-post-form found in HTML"); return;
+    }
+
+    form.addEventListener("submit", async(event) =>{
+        event.preventDefault(); //dont let browser reload the page
+
+        //clear old message
+        message.textContent = "";
+        message.className = "form-message";
+
+        //must have selected a book on the left
+        if(!currentBookId){
+            message.textContent = "Pick a book on the left first.";
+            message.classList.add("error");
+            return;
+        }
+
+        // grab values from inputs
+        const authorName = document.getElementById("authorName").value.trim();
+        const headline = document.getElementById("headline").value.trim();
+        const rating = Number(document.getElementById("rating").value);
+        const content = document.getElementById("content").value.trim();
+
+        // simple validation
+        if(!authorName|| !headline || !content){
+            message.textContent = "Please fill in your name, a headline, and your thoughts.";
+            message.classList.add("error");
+            return;
+        }
+
+        const newPost ={
+            authorName: authorName,
+            headline: headline,
+            rating: rating,
+            content: content
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/books/${currentBookId}/posts`,{
+                method:"POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body:JSON.stringify(newPost)
+            });
+
+            if(!response.ok){
+                console.error("Failed to save post. Status:", response.status);
+                message.textContent = "Could not save post. Try again.";
+                message.classList.add("error");
+                return;
+            }
+
+            const savedPost = await response.json();
+            console.log("Saved post:", savedPost);
+            
+            message.textContent = "Reflection saved!";
+            message.classList.add("success");
+
+            //reload posts for this book so the new one appears
+            fetchPostsForBook(currentBookId);
+
+            // clear form
+            form.reset();
+            document.getElementById("rating").value = "5";
+        } catch (error) {
+            console.error("Error saving posts:", error);
+            message.textContent = "Network error. Please try again.";
+            message.classList.add("error");
+        }
+    });
+}
+
+async function fetchPostsForBook(bookId){
+    try {
+        const response = await fetch(`${API_BASE}/books/${bookId}/posts`);
+
+        if(!response.ok){
+            console.error("Failed to load posts. Status:", response.status);
+            renderPostsList([]);  // show 'no posts' message
+            return;
+        }
+        const posts = await response.json();
+        console.log("Posts from backend for book", bookId, posts);
+        renderPostsList(posts);
+    } catch (error) {
+      console.error("Error calling posts API:", error);
+      renderPostsList([]);  
+    }
 }
