@@ -10,6 +10,10 @@ header{
     background-color: #111827;
     color: white;
     padding: 16px 24px;
+    background-image: url("/blue-sky.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 main{
@@ -17,6 +21,7 @@ main{
     gap:16px;
     padding: 16px 24px;
     box-sizing: border-box;
+    background-color: rgb(240, 194, 133);
 }
 
 /* Left column: list of books */
@@ -85,4 +90,56 @@ main{
 .post-content{
     margin: 0;
     line-height: 1.45;
+}
+/* New post form layout */
+
+#new-post-form{
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-row{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#new-post-form input,
+#new-post-form select,
+#new-post-form textarea{
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+#new-post-form button[type="submit"]{
+    align-self: flex-start;
+    padding: 8px 14px;
+    border-radius: 4px;
+    border:none;
+    background-color: #2563eb;
+    color:white;
+    cursor: pointer;
+}
+
+#new-post-form button[type="submit"]:hover{
+    background-color: #1d4ed8;
+}
+
+/* message under the form */
+.form-message{
+    margin-top: 4px;
+    font-size: 0.9rem;
+}
+
+.form-message.error{
+    color:#b91c1c;
+}
+
+.form-message.success{
+    color:#15803d;
 }

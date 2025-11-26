@@ -15,7 +15,7 @@
 <!--        Where books and posts will appear-->
         <section id="book-list">
             <h2>Books</h2>
-            <div id="book-container">
+            <div id="books-container">
 
             </div>
             
@@ -25,8 +25,40 @@
         <section id="post-list">
             <h2 id="posts-heading">Posts</h2>
 
-            <div id="posts-containers"></div>
+            <div id="posts-container"></div>
             <!-- js will insert posts here -->
+            <h3>Write a new reflection</h3>
+
+            <form id="new-post-form">
+                <div class="form-row">
+                    <label for="authorName">Your name</label>
+                    <input id="authorName" name="authorName" required/>
+                </div>
+
+                <div class="form-row">
+                    <label for="headline">Headline</label>
+                    <input id="headline" name="headline" required/>
+                </div>
+
+                <div class="form-row">
+                    <label for="rating">Rating (1-5)</label>
+                    <select name="rating" id="rating">
+                        <option value="5">5 - Loved it</option>
+                        <option value="4">4 - Really good</option>
+                        <option value="3">3 - It was "okay"</option>
+                        <option value="2">2 - Not my thing</option>
+                        <option value="1">1 - I suffered.</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="content">Your thoughts</label>
+                    <textarea name="content" id="content" row="4" required></textarea>
+                </div>
+
+                <button type="submit">Post reflection</button>
+            </form>
+            <p id="form-message" class="form-message"></p>
         </section>
 
     </main>
