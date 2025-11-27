@@ -8,13 +8,29 @@
 </head>
 <body>
     <header>
-        <h1>BookBites</h1>
+        <h1>BookBites - Reading Reflections</h1>
         <p>Short reflections on books you've read</p>
     </header>
     <main>
 <!--        Where books and posts will appear-->
         <section id="book-list">
-            <h2>Books</h2>
+            <h2>Your Books</h2>
+
+            <form id="new-book-form" class="card">
+                <h3>Add a new book</h3>
+
+                <label for="newBookTitle">Book title</label>
+                <input type="text" id="newBookTitle" required placeholder="Ex: Dune">
+
+                <label for="newBookAuthor">Author (optional)</label>
+                <input type="text" id="newBookAuthor" placeholder="Ex: Frank Herbert">
+
+                <button type="submit">Add book</button>
+                <p id="book-form-massage" class="form-message"></p>
+            </form>
+
+            <hr>
+
             <div id="books-container">
 
             </div>
@@ -23,7 +39,7 @@
 
 <!--        Right: posts for a selected book-->
         <section id="post-list">
-            <h2 id="posts-heading">Posts</h2>
+            <h2 id="posts-heading">Reflections</h2>
 
             <div id="posts-container"></div>
             <!-- js will insert posts here -->
@@ -41,7 +57,7 @@
                 </div>
 
                 <div class="form-row">
-                    <label for="rating">Rating (1-5)</label>
+                    <label for="rating">How strongly did this book(1-5)</label>
                     <select name="rating" id="rating">
                         <option value="5">5 - Loved it</option>
                         <option value="4">4 - Really good</option>
@@ -52,7 +68,7 @@
                 </div>
 
                 <div class="form-row">
-                    <label for="content">Your thoughts</label>
+                    <label for="content">Your reflection (what did this book make you think or feel?)</label>
                     <textarea name="content" id="content" row="4" required></textarea>
                 </div>
 

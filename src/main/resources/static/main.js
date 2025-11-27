@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     console.log("BookBites front end load");
     // load books when the page is ready
     fetchBooks()
+    setupNewBookForm();
     setupNewPostForm();
 });
 
@@ -74,9 +75,9 @@ function renderPostsList(posts){
 
     //update the heading to show which book we're on
     if(currentBookTitle){
-        heading.textContent = `Posts for: ${currentBookTitle}`;
+        heading.textContent = `Reflections on: ${currentBookTitle}`;
     }else{
-        heading.textContent = "Posts";
+        heading.textContent = "Reflections";
     }
 
     // Clear out any old posts
@@ -100,7 +101,7 @@ function renderPostsList(posts){
 
         const divide = document.createElement("div");
         divide.className = "post-meta";
-        divide.textContent = `${post.authorName} • Rating: ${post.rating}/5`;
+        divide.textContent = `Written by ${post.authorName} • Impact: ${post.rating}/5`;
 
         const writing = document.createElement("p");
         writing.textContent = post.content;
@@ -203,4 +204,23 @@ async function fetchPostsForBook(bookId){
       console.error("Error calling posts API:", error);
       renderPostsList([]);  
     }
+}
+
+function setupNewBookForm(){
+    const form = document.getElementById("new-book-form");
+    const message = document.getElementById("new-form-message")
+
+    if(!form){
+        console.warn("No new-book-form found in HTML");
+        return;
+    }
+
+    form.addEventListener("submit", async (event) =>{
+        event.preventDefault();
+
+        message.textContent = "";
+        message.className = "form-message";
+
+        
+    })
 }
