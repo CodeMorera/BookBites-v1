@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     fetchBooks()
     setupNewBookForm();
     setupNewPostForm();
+    setupFullscreenMode();
 });
 
 async function fetchBooks() {
@@ -208,7 +209,7 @@ async function fetchPostsForBook(bookId){
 
 function setupNewBookForm(){
     const form = document.getElementById("new-book-form");
-    const message = document.getElementById("new-form-message")
+    const message = document.getElementById("book-form-message")
 
     if(!form){
         console.warn("No new-book-form found in HTML");
@@ -221,6 +222,90 @@ function setupNewBookForm(){
         message.textContent = "";
         message.className = "form-message";
 
+        const titleInput = document.getElementById("newBookTitle");
+        const authorInput = document.getElementById("newBookAuthor");
+
+        const title = titleInput.value.trim();
+        const author = authorInput.value.trim();
         
-    })
+        if(!title){
+            message.textContent = "Please enter a book title.";
+            message.classList.add("error");
+            return;
+        }
+
+        const newBook = {
+            title: title,
+            author: author || null
+        };
+
+        try{
+            const response = await fetch(`${API_BASE}/books`,{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newBook)
+            });
+
+            if (!response.ok){
+                console.error("Failed to save book. Status:", response.status);
+                message.textContent = "Could not save book. Try again";
+                message.classList.add("error");
+                return;
+            }
+
+            const saveBook = await response.json();
+            console.log("Saved book:", saveBook);
+
+            message.textContent = "Book added!";
+            message.classList.add("success");
+
+            // refreshes the list on the left
+            fetchBooks();
+
+            // clear the form
+            form.reset();
+        }catch(error){
+            console.error("Error saving book:", error);
+            message.textContent = "Network error. Please try again.";
+            message.classList.add("error");
+        }
+    });
 }
+
+function setupFullscreenMode(){
+    const openBtn = document.getElementById("fullscreen-btn");
+    const overlay = document.getElementById("fullscreen-overlay");
+    const exitBtn = document.getElementById("exit-fullscreen");
+    const saveBtn = document.getElementById("save-fullscreen");
+    const editor = document.getElementById("fullscreen-textarea");
+    const regularTextarea = document.getElementById("content");
+
+    // always starts hidden
+    overlay.classList.add("hidden")
+
+    // Open fullscreen mode
+    openBtn.addEventListener("click", ()=>{
+        editor.value = regularTextarea.value;
+        overlay.classList.remove("hidden");
+    });
+
+    // Exit without saving
+    exitBtn.addEventListener("click", ()=>{
+        overlay.classList.add("hidden");
+    });
+
+    // Save and exit
+    saveBtn.addEventListener("click", ()=>{
+        regularTextarea.value = editor.value;
+        overlay.classList.add("hidden");
+    });
+}
+const displayTime = function(){
+    const date = new Date();
+    const time = date.toLocaleTimeString();
+    const timeEl = document.getElementById("time");
+    timeEl.innerText = time;
+}
+setInterval(displayTime, 1000);

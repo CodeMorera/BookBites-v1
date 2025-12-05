@@ -10,6 +10,7 @@
     <header>
         <h1>BookBites - Reading Reflections</h1>
         <p>Short reflections on books you've read</p>
+        <h4 id="time"></h4>
     </header>
     <main>
 <!--        Where books and posts will appear-->
@@ -19,14 +20,14 @@
             <form id="new-book-form" class="card">
                 <h3>Add a new book</h3>
 
-                <label for="newBookTitle">Book title</label>
-                <input type="text" id="newBookTitle" required placeholder="Ex: Dune">
+                <label for="newBookTitle">Book title</label><br>
+                <input type="text" id="newBookTitle" required placeholder="Ex: Dune"><br>
 
-                <label for="newBookAuthor">Author (optional)</label>
-                <input type="text" id="newBookAuthor" placeholder="Ex: Frank Herbert">
+                <label for="newBookAuthor">Author (optional)</label><br>
+                <input type="text" id="newBookAuthor" placeholder="Ex: Frank Herbert"><br>
 
                 <button type="submit">Add book</button>
-                <p id="book-form-massage" class="form-message"></p>
+                <p id="book-form-message" class="form-message"></p>
             </form>
 
             <hr>
@@ -68,13 +69,33 @@
                 </div>
 
                 <div class="form-row">
-                    <label for="content">Your reflection (what did this book make you think or feel?)</label>
-                    <textarea name="content" id="content" row="4" required></textarea>
+                    <label for="prompt">Choose a writing prompt</label>
+                    <select id="prompt">
+                        <option value="reflection">What did this book make you think or feel?</option>
+                        <option value="moment">Describe a moment that stuck with you.</option>
+                        <option value="change">Did this book/recent chapter change your way of thinking?</option>
+                        <option value="emotion">What emotions did this book evoke?</option>
+                        <option value="questions">What questions did this book leave you with?</option>
+                    </select>
+                    <label for="content">Your reflection</label>
+                    <button id="fullscreen-btn" class="fullscreen-btn">
+                        Fullscreen Writing Mode
+                    </button>
+                    <textarea name="content" id="content" placeholder="Write you essay here..." required></textarea>
                 </div>
 
                 <button type="submit">Post reflection</button>
             </form>
             <p id="form-message" class="form-message"></p>
+            <div id="fullscreen-overlay" class="fullscreen-overlay hidden" >
+                <div class="fullscreen-editor">
+                    <textarea id="fullscreen-textarea" placeholder="Start writing your reflection"></textarea>
+                    <div class="fullscreen-controls">
+                        <button id="exit-fullscreen" class="exit-btn">Exit</button>
+                        <button id="save-fullscreen" class="save-btn">Save Reflection</button>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </main>
