@@ -105,7 +105,7 @@ function renderPostsList(posts){
         divide.textContent = `Written by ${post.authorName} • Impact: ${post.rating}/5`;
 
         const writing = document.createElement("p");
-        writing.textContent = post.content;
+        writing.innerHTML = post.content;
 
         article.append(headline,divide,writing);
         container.appendChild(article);
@@ -137,7 +137,8 @@ function setupNewPostForm(){
         const authorName = document.getElementById("authorName").value.trim();
         const headline = document.getElementById("headline").value.trim();
         const rating = Number(document.getElementById("rating").value);
-        const content = document.getElementById("content").value.trim();
+        const editor = tinymce.get('content');
+        const content = editor ? editor.getContent().trim(): '';
 
         // simple validation
         if(!authorName|| !headline || !content){
@@ -181,6 +182,12 @@ function setupNewPostForm(){
             // clear form
             form.reset();
             document.getElementById("rating").value = "5";
+
+            const editor = tinymce.get('content');
+            if(editor) {
+                editor.setContent('');
+            }
+
         } catch (error) {
             console.error("Error saving posts:", error);
             message.textContent = "Network error. Please try again.";
@@ -302,6 +309,19 @@ function setupFullscreenMode(){
         overlay.classList.add("hidden");
     });
 }
+
+tinymce.init({
+    selector: "#content",
+    plugins: "powerpaste casechange searchreplace autolink directionality advcode visualblocks visualchars image link media mediaembed codesample table charmap pagebreak nonbreaking anchor tableofcontents insertdatetime advlist lists checklist wordcount tinymcespellchecker editimage help formatpainter permanentpen charmap linkchecker emoticons advtable export print autosave",
+    toolbar: "undo redo print spellcheckdialog formatpainter | blocks fontfamily fontsize | bold italic underline forecolor backcolor | link image | alignleft aligncenter alignright alignjustify lineheight | checklist bullist numlist indent outdent | removeformat",
+    menubar:true,
+    statusbar: false,
+    // height: 250,
+    skin: 'oxide-dark',
+    content_css: 'dark',
+    branding: false
+});
+
 const displayTime = function(){
     const date = new Date();
     const time = date.toLocaleTimeString();
