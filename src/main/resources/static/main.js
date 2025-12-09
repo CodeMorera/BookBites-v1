@@ -1,6 +1,7 @@
 const API_BASE = "http://localhost:8080/api";
 let currentBookId = null; //last clicked book here
 let currentBookTitle ="";// just for the heading text
+let selectedPromptId = null; 
 
 // This is to run only after the html is ready
 document.addEventListener("DOMContentLoaded",()=>{
@@ -56,6 +57,8 @@ function renderBookList(books){
 
             // load that book's posts from the backend
             fetchPostsForBook(book.id);
+            // load prompts for this book
+            loadPromptsForBook(book.id);
         });
         element.appendChild(item);
     });
@@ -88,7 +91,7 @@ function renderPostsList(posts){
     if(!posts || posts.length === 0){
         const empty = document.createElement("p");
         empty.textContent = "No posts yet. Be the first to write about this book!";
-        conatainer.appendChild(empty);
+        container.appendChild(empty);
         return;
     }
 
@@ -110,6 +113,28 @@ function renderPostsList(posts){
         article.append(headline,divide,writing);
         container.appendChild(article);
     })
+}
+
+function selectPrompt(promptId, promptText){
+    selectedPromptId = promptId;
+
+    const selectedTextEl = document.getElementById("selected-prompt-text");
+    if(selectedTextEl){
+        selectedTextEl.textContent = promptText;
+    }
+
+    const buttons = document.querySelectorAll(".prompt-button");
+    buttons.forEach((btn) => {
+        btn.classList.removed("active-prompt");
+    });
+    const promptListEl = document.getElementById("prompt-list");
+    if(promptListEl){
+        [...promptListEl.children].forEach((btn) => {
+            if(btn.textContent === promptText){
+                btn.classList.add("active-prompt");
+            }
+        })
+    }
 }
 
 function setupNewPostForm(){
@@ -151,7 +176,8 @@ function setupNewPostForm(){
             authorName: authorName,
             headline: headline,
             rating: rating,
-            content: content
+            content: content,
+            promptId: selectedPromptId
         };
 
         try {
@@ -188,6 +214,15 @@ function setupNewPostForm(){
                 editor.setContent('');
             }
 
+            selectedPromptId = null;
+            const selectedTextEl = document.getElementById("selected-prompt-text");
+            if (selectedTextEl) {
+                selectedTextEl.textContent = "";
+            }
+            const buttons = document.querySelectorAll(".prompt-button";
+                buttons.forEach((btn) => btn.classList.remove("active-prompt"));
+            )
+
         } catch (error) {
             console.error("Error saving posts:", error);
             message.textContent = "Network error. Please try again.";
@@ -211,6 +246,57 @@ async function fetchPostsForBook(bookId){
     } catch (error) {
       console.error("Error calling posts API:", error);
       renderPostsList([]);  
+    }
+}
+
+async function loadPromptsForBook(bookId) {
+    const promptListEl = document.getElementById("prompt-list");
+    const selectedTextEl = document.getElementById("selected-prompt-text");
+
+    if (!promptListEl) {
+        console.warn("No #prompt-list element found in HTML");
+        return;
+    }
+
+    promptListEl.innerHTML = "";
+    if (selectedTextEl) {
+        selectedTextEl.textContent = "";
+    }
+    selectedPromptId = null;
+
+    try {
+        const response = await fetch(`${API_BASE}/books/${bookId}/prompts`);
+
+        if(!response.ok){
+            console.error("Failed to load prompts. Status:", response.status);
+            promptListEl.textContent = "Could not load prompts.";
+            return;
+        }
+
+        const prompts = await response.json();
+        console.log("Prompts from backend for book", bookId, prompts);
+        
+        if (!prompts || prompts.length === 0) {
+            promptListEl.textContent = "No prompts yet. Just write freely!";
+            return;
+        }
+
+        prompts.forEach((prompt) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "prompt-button";
+            btn.textContent = prompt.text;
+
+            btn.addEventListener("click", () =>{
+                selectPrompt(prompt.id, prompt.text);
+            });
+
+            promptListEl.appendChild(btn);
+        });
+    }catch (error) {
+        console.error("Error calling prompts API:", error);
+        promptListEl.textContent = "Error loading prompts.";
+        
     }
 }
 

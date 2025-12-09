@@ -19,6 +19,25 @@ public class PostCreateRequest {
     @Max(5)
     private Integer rating;
 
+    private Long bookId;
+
+    public Long getBookId() {
+        return bookId;
+    }
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
+    }
+
+    private Long promptId;
+
+    public Long getPromptId() {
+        return promptId;
+    }
+
+    public void setPromptId(Long promptId){
+        this.promptId = promptId;
+    }
+
     public PostCreateRequest(){
 
     }

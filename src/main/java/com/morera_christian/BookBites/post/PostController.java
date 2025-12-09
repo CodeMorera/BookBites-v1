@@ -2,6 +2,9 @@ package com.morera_christian.BookBites.post;
 
 import com.morera_christian.BookBites.book.Book;
 import com.morera_christian.BookBites.book.BookRepository;
+import com.morera_christian.BookBites.prompt.Prompt;
+import com.morera_christian.BookBites.prompt.PromptRepository;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +18,14 @@ public class PostController {
 
         private final PostRepository postRepository;
         private final BookRepository bookRepository;
+        private final PromptRepository promptRepository; 
 
         public PostController(PostRepository postRepository,
-                              BookRepository bookRepository){
+                              BookRepository bookRepository,
+                              PromptRepository promptRepository){
             this.postRepository = postRepository;
             this.bookRepository = bookRepository;
+            this.promptRepository = promptRepository;
         }
         // Getting all posts for a specific book
         @GetMapping
@@ -39,6 +45,13 @@ public class PostController {
             Book book = bookRepository.findById(bookId)
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND, "Book not found"));
+            Prompt prompt = null;
+            if(request.getPromptId() != null){
+                prompt = promptRepository.findById(request.getPromptId())
+                        .orElseThrow(()-> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "Prompt not found"));
+            }
+            
 
             //Build a new Post from the request + book
             Post post = new Post(
@@ -48,8 +61,8 @@ public class PostController {
                     request.getRating(),
                     book
             );
-            // createdAt is set automatically by @PrePersist in Post
 
+            post.setPrompt(prompt);
             //Save it to the database
             return postRepository.save(post);
         }

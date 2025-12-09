@@ -1,5 +1,7 @@
 package com.morera_christian.BookBites.post;
 import com.morera_christian.BookBites.book.Book;
+import com.morera_christian.BookBites.prompt.Prompt;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -38,6 +40,19 @@ public class Post {
         if(this.createdAt == null){
             this.createdAt = LocalDateTime.now();
         }
+    }
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "prompt_id")
+    private Prompt prompt;
+    
+
+    public Prompt getPrompt() {
+        return prompt;
+    }
+
+    public void setPrompt(Prompt prompt) {
+        this.prompt = prompt;
     }
 
     @ManyToOne(optional = false)
@@ -105,5 +120,7 @@ public class Post {
     public void setBook(Book book) {
         this.book = book;
     }
+
+
 
 }

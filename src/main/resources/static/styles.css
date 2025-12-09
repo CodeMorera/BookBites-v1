@@ -29,7 +29,8 @@ main{
 /* Left column: list of books */
 #book-list{
     width: 30%;                              /*30% of the width*/
-    background-color: #1f2a3f;
+    /* background-color: #1f2a3f; */
+    background-color:#334979;
     padding: 12px;
     box-sizing: border-box;
     border-radius: 8px;
@@ -236,4 +237,6 @@ main{
 }
 #time{
     text-align: right;
+    color: #293a61;
+    font-size: 1em;
 }

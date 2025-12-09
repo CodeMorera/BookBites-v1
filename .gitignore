@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ###Properties###
-C:\Users\chris\OneDrive\Documents\Books\java\BookBitesV1\BookBites\src\main\resources\application.properties
+src\main\resources\application.properties
