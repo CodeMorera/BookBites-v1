@@ -3,7 +3,8 @@ package com.morera_christian.BookBites.book;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="books")
+@Table(name="books", uniqueConstraints = @UniqueConstraint(columnNames = {"title", "author"})
+)
 public class Book {
 
     @Id

@@ -219,9 +219,9 @@ function setupNewPostForm(){
             if (selectedTextEl) {
                 selectedTextEl.textContent = "";
             }
-            const buttons = document.querySelectorAll(".prompt-button";
-                buttons.forEach((btn) => btn.classList.remove("active-prompt"));
-            )
+            const buttons = document.querySelectorAll(".prompt-button")
+            buttons.forEach((btn) => btn.classList.remove("active-prompt"));
+            
 
         } catch (error) {
             console.error("Error saving posts:", error);
@@ -398,10 +398,10 @@ function setupFullscreenMode(){
 
 tinymce.init({
     selector: "#content",
-    plugins: "powerpaste casechange searchreplace autolink directionality advcode visualblocks visualchars image link media mediaembed codesample table charmap pagebreak nonbreaking anchor tableofcontents insertdatetime advlist lists checklist wordcount tinymcespellchecker editimage help formatpainter permanentpen charmap linkchecker emoticons advtable export print autosave",
-    toolbar: "undo redo print spellcheckdialog formatpainter | blocks fontfamily fontsize | bold italic underline forecolor backcolor | link image | alignleft aligncenter alignright alignjustify lineheight | checklist bullist numlist indent outdent | removeformat",
+    plugins: "powerpaste casechange searchreplace autolink directionality advcode visualblocks visualchars image link media mediaembed codesample table charmap pagebreak nonbreaking anchor tableofcontents insertdatetime advlist lists checklist wordcount tinymcespellchecker editimage help formatpainter permanentpen charmap linkchecker emoticons advtable export autosave wordcount",
+    toolbar: "undo redo print spellcheckdialog formatpainter | blocks fontfamily fontsize | bold italic underline forecolor backcolor | link image | alignleft aligncenter alignright alignjustify lineheight | checklist bullist numlist indent outdent | removeformat | wordcount",
     menubar:true,
-    statusbar: false,
+    statusbar: true,
     // height: 250,
     skin: 'oxide-dark',
     content_css: 'dark',

@@ -34,3 +34,5 @@ build/
 
 ###Properties###
 src\main\resources\application.properties
+
+clean-repo/

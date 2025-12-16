@@ -46,7 +46,22 @@
             <div id="posts-container"></div>
             <!-- js will insert posts here -->
             <h3>Write a new reflection</h3>
-
+            <div class="form-row">
+                    <label for="prompt">Choose a writing prompt</label>
+                    <select id="prompt">
+                        <option value="reflection">What did this book make you think or feel?</option>
+                        <option value="moment">Describe a moment that stuck with you.</option>
+                        <option value="change">Did this book/recent chapter change your way of thinking?</option>
+                        <option value="emotion">What emotions did this book evoke?</option>
+                        <option value="questions">What questions did this book leave you with?</option>
+                    </select>
+                    <label for="content">Your reflection</label>
+                    <button id="fullscreen-btn" class="fullscreen-btn">
+                        Fullscreen Writing Mode
+                    </button>
+                    <!-- <textarea name="content" id="content" placeholder="Write you essay here..." required></textarea> -->
+                </div>
+            <textarea name="content" id="content" placeholder="Write you essay here..." required></textarea>
             <form id="new-post-form">
                 <div class="form-row">
                     <label for="authorName">Your name</label>
@@ -78,7 +93,7 @@
                     </p>
                 </section>
 
-                <div class="form-row">
+                <!-- <div class="form-row">
                     <label for="prompt">Choose a writing prompt</label>
                     <select id="prompt">
                         <option value="reflection">What did this book make you think or feel?</option>
@@ -91,8 +106,8 @@
                     <button id="fullscreen-btn" class="fullscreen-btn">
                         Fullscreen Writing Mode
                     </button>
-                    <textarea name="content" id="content" placeholder="Write you essay here..." required></textarea>
-                </div>
+                    <!-- <textarea name="content" id="content" placeholder="Write you essay here..." required></textarea> -->
+                </div> -->
 
                 <button type="submit">Post reflection</button>
             </form>
@@ -109,6 +124,6 @@
         </section>
 
     </main>
-    <script src="main.js"></script>
+    <script src="/main.js" defer></script>
 </body>
 </html>
